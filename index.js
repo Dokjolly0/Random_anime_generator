@@ -2,6 +2,8 @@ const express = require("express");
 const axios = require("axios");
 const cheerio = require("cheerio");
 const cors = require("cors");
+const fs = require("fs");
+const path = require("path");
 
 const app = express();
 const PORT = 3000;
@@ -14,37 +16,37 @@ const getRandomAnime = async () => {
     const response = await axios.get("https://www.animeunity.so/randomanime");
     const $ = cheerio.load(response.data);
 
-    console.log(response);
-
     const anime = {
       image: $(".cover-wrap img").attr("src"),
       title: $("h1.title").text().trim(),
       description: $(".description").text().trim(),
-      // Count all the <a> tags inside the .episode div
-      episodes: $(".episode .episode-item a").length,
+      episodes: $(".episode-wrapper .episode-item").length,
       genres: $(".info-wrapper small")
         .map((i, el) => $(el).text().trim())
         .get()
         .filter((genre) => genre && !genre.includes("\n")),
-      rating: $(".anime-info-wrapper strong").text().trim(),
-      seasons: $(".anime-info-wrapper small").text().trim(),
+      rating: $(".info-item:contains('Valutazione') small").text().trim(),
+      type: $(".info-item:contains('Tipo') small").text().trim(),
+      episodeDuration: $(".info-item:contains('Durata episodio') small")
+        .text()
+        .trim(),
+      status: $(".info-item:contains('Stato') small").text().trim(),
+      year: $(".info-item:contains('Anno') small").text().trim(),
+      season: $(".info-item:contains('Stagione') small").text().trim(),
+      studio: $(".info-item:contains('Studio') small").text().trim(),
+      favorites: $(".info-item:contains('Preferiti') small").text().trim(),
+      members: $(".info-item:contains('Membri') small").text().trim(),
+      views: $(".info-item:contains('Visite') small").text().trim(),
     };
-
-    console.log(anime.episodes);
 
     // Pulizia dei generi
     anime.genres = anime.genres.filter((genre) => genre && genre !== "");
 
     // Estrazione del voto
-    const ratingText = $(".anime-info-wrapper strong").text().trim();
+    const ratingText = $(".info-item:contains('Valutazione') small")
+      .text()
+      .trim();
     anime.rating = parseFloat(ratingText) || "N/A";
-
-    // Estrazione delle stagioni e altre informazioni
-    const infoText = $(".anime-info-wrapper small").text().trim();
-    anime.seasons = infoText
-      .split("\n")
-      .map((line) => line.trim())
-      .filter((line) => line !== "");
 
     return anime;
   } catch (error) {
@@ -65,9 +67,23 @@ app.get("/random-anime/:count", async (req, res) => {
     }
   }
 
+  // Creazione della cartella "response" se non esiste
+  const responseDir = path.join(__dirname, "response");
+  if (!fs.existsSync(responseDir)) {
+    fs.mkdirSync(responseDir);
+  }
+
+  // Salvataggio della risposta come file JSON
+  const filePath = path.join(responseDir, "response.json");
+  fs.writeFileSync(filePath, JSON.stringify(animeList, null, 2));
+
   res.json(animeList);
 });
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
+
+/*
+<div class="info-wrapper pt-3 anime-info-wrapper"><div class="info-item"><strong>Tipo</strong><br> <small>TV</small></div> <div class="info-item"><strong>Episodi</strong><br> <small>24</small></div> <div class="info-item"><strong>Durata episodio</strong><br> <small>24 min</small></div> <div class="info-item"><strong>Stato</strong><br> <small>Terminato</small></div> <div class="info-item"><strong>Anno</strong><br> <small>2014</small></div> <div class="info-item"><strong>Stagione</strong><br> <small>Autunno</small></div> <div class="info-item"><strong>Studio</strong><br> <small>Studio Pierrot</small></div> <div class="info-item"><strong>Valutazione</strong><br> <small>8.38</small> <i class="icon-score-star"></i></div> <div class="info-item"><strong>Preferiti</strong><br> <small>681</small> <i class="fas fa-heart d-inline-block" style="font-size: 10px !important; color: red;"></i></div> <div class="info-item"><strong>Membri</strong><br> <small>4.048</small> <i class="fas fa-user d-inline-block" style="font-size: 10px !important;"></i></div> <div class="info-item"><strong>Visite</strong><br> <small id="episode-visual">653.522</small> <small><i class="fas fa-eye"></i></small></div></div>
+*/
