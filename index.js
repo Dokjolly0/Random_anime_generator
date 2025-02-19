@@ -37,10 +37,13 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     try {
-      const response = await axios.get(
+      const response = await fetch(
         `http://localhost:3000/random-anime/${animeCount}`
       );
-      animeList = response.data; // Salva i dati anime
+
+      if (!response.ok) throw new Error("Failed to fetch anime");
+      animeList = await response.json();
+
       populateGenreForm();
       displayAnime(animeList);
 
