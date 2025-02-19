@@ -28,16 +28,18 @@
           />
         </div>
 
+        <!-- Filtro per genere (con popup per selezione dei generi) -->
         <div class="col-md-2">
           <label for="genreFilter" class="form-label">Filter by Genre</label>
-          <select
-            id="genreFilter"
-            class="form-select"
-            disabled
-            title="Prima genera un anime"
+          <button
+            type="button"
+            id="selectedGenres"
+            class="btn btn-secondary w-100"
+            data-bs-toggle="modal"
+            data-bs-target="#genreModal"
           >
-            <option value="">All Genres</option>
-          </select>
+            Filtra Generi
+          </button>
         </div>
 
         <div class="col-md-2">
@@ -48,8 +50,10 @@
             disabled
             title="Prima genera un anime"
           >
-            <option value="rating">Rating</option>
-            <option value="year">Year</option>
+            <option value="rating_asc">Rating (Low to High)</option>
+            <option value="rating_desc">Rating (High to Low)</option>
+            <option value="year_asc">Year (Old to New)</option>
+            <option value="year_desc">Year (New to Old)</option>
           </select>
         </div>
 
@@ -71,6 +75,50 @@
         </div>
       </div>
 
+      <!-- Modal per selezione generi -->
+      <div
+        class="modal fade"
+        id="genreModal"
+        tabindex="-1"
+        aria-labelledby="genreModalLabel"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog modal-dialog-scrollable">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="genreModalLabel">Select Genres</h5>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div class="modal-body">
+              <form id="genreForm">
+                <!-- Le checkbox dei generi saranno generate dinamicamente -->
+              </form>
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-bs-dismiss="modal"
+              >
+                Close
+              </button>
+              <button
+                type="button"
+                class="btn btn-primary"
+                id="applyGenreFilter"
+              >
+                Apply Filters
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- Displaying the anime cards -->
       <div class="row mt-5" id="animeGrid">
         <!-- Anime cards will be dynamically injected here -->
@@ -79,6 +127,7 @@
 
     <!-- External script -->
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <script src="./index.js"></script>
   </body>
 </html>

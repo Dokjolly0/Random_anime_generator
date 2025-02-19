@@ -3,20 +3,22 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Seleziona elementi DOM
   const animeCountInput = document.getElementById("animeCount");
-  const genreFilter = document.getElementById("genreFilter");
   const sortOrder = document.getElementById("sortOrder");
   const applyFiltersBtn = document.querySelector(".apply-filters");
   const searchBtn = document.querySelector(".search-btn");
+  const genreForm = document.getElementById("genreForm");
+  const applyGenreFilterBtn = document.getElementById("applyGenreFilter");
+  const genreModal = new bootstrap.Modal(document.getElementById("genreModal"));
+
+  let selectedGenres = [];
 
   // Disabilita i filtri all'inizio
   function disableFilters(disabled) {
-    genreFilter.disabled = disabled;
     sortOrder.disabled = disabled;
     applyFiltersBtn.disabled = disabled;
 
     // Imposta o rimuove il tooltip
     const tooltipText = disabled ? "Prima genera un anime" : "";
-    genreFilter.setAttribute("title", tooltipText);
     sortOrder.setAttribute("title", tooltipText);
     applyFiltersBtn.setAttribute("title", tooltipText);
   }
@@ -36,7 +38,7 @@ document.addEventListener("DOMContentLoaded", function () {
         `http://localhost:3000/random-anime/${animeCount}`
       );
       animeList = response.data; // Salva i dati anime
-      populateGenreFilter();
+      populateGenreForm();
       displayAnime(animeList);
 
       disableFilters(false); // Abilita i filtri
@@ -44,6 +46,40 @@ document.addEventListener("DOMContentLoaded", function () {
       console.error("Error fetching anime:", error);
       alert("There was an error fetching the anime. Please try again later.");
     }
+  });
+
+  // Popola il form con le checkbox per i generi
+  function populateGenreForm() {
+    genreForm.innerHTML = ""; // Reset
+
+    const genres = new Set();
+    animeList.forEach((anime) =>
+      anime.genres.forEach((genre) => genres.add(genre))
+    );
+
+    genres.forEach((genre) => {
+      const div = document.createElement("div");
+      div.classList.add("form-check");
+      div.innerHTML = `
+        <input class="form-check-input" type="checkbox" value="${genre}" id="genre_${genre}">
+        <label class="form-check-label" for="genre_${genre}">
+          ${genre}
+        </label>
+      `;
+      genreForm.appendChild(div);
+    });
+  }
+
+  // Funzione per aprire il modal
+  applyGenreFilterBtn.addEventListener("click", function () {
+    // Raccoglie i generi selezionati
+    selectedGenres = [];
+    document
+      .querySelectorAll('#genreForm input[type="checkbox"]:checked')
+      .forEach((checkbox) => {
+        selectedGenres.push(checkbox.value);
+      });
+    genreModal.hide(); // Chiude il modal
   });
 
   // Mostra gli anime filtrati
@@ -75,41 +111,26 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  // Popola il filtro generi
-  function populateGenreFilter() {
-    genreFilter.innerHTML = `<option value="">All Genres</option>`; // Reset
-
-    const genres = new Set();
-    animeList.forEach((anime) =>
-      anime.genres.forEach((genre) => genres.add(genre))
-    );
-
-    genres.forEach((genre) => {
-      const option = document.createElement("option");
-      option.value = genre;
-      option.textContent = genre;
-      genreFilter.appendChild(option);
-    });
-  }
-
   // Applica i filtri e ordinamenti
   applyFiltersBtn.addEventListener("click", function () {
-    const selectedGenre = genreFilter.value;
-    const sortOrderValue = sortOrder.value;
-
     let filteredAnime = animeList;
 
-    // Filtra per genere se selezionato
-    if (selectedGenre) {
+    // Filtra per generi se selezionato
+    if (selectedGenres.length > 0) {
       filteredAnime = filteredAnime.filter((anime) =>
-        anime.genres.includes(selectedGenre)
+        anime.genres.some((genre) => selectedGenres.includes(genre))
       );
     }
 
     // Ordina per rating o anno
-    if (sortOrderValue === "rating") {
+    const sortOrderValue = sortOrder.value;
+    if (sortOrderValue === "rating_asc") {
+      filteredAnime.sort((a, b) => a.rating - b.rating);
+    } else if (sortOrderValue === "rating_desc") {
       filteredAnime.sort((a, b) => b.rating - a.rating);
-    } else if (sortOrderValue === "year") {
+    } else if (sortOrderValue === "year_asc") {
+      filteredAnime.sort((a, b) => a.year - b.year);
+    } else if (sortOrderValue === "year_desc") {
       filteredAnime.sort((a, b) => b.year - a.year);
     }
 
