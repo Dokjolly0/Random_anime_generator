@@ -2,3 +2,9 @@
   height: 300px;
   object-fit: cover;
 }
+
+.btn:disabled {
+  opacity: 0.65; /* Riduci l'opacità per i bottoni disabilitati */
+  background-color: #6c757d; /* Colore più scuro per i bottoni disabilitati */
+  border-color: #6c757d;
+}

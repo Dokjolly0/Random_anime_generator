@@ -9,6 +9,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const genreForm = document.getElementById("genreForm");
   const applyGenreFilterBtn = document.getElementById("applyGenreFilter");
   const genreModal = new bootstrap.Modal(document.getElementById("genreModal"));
+  const filterByGenreBtn = document.getElementById("selectedGenres"); // Bottone per aprire il popup dei generi
 
   let selectedGenres = [];
 
@@ -16,11 +17,13 @@ document.addEventListener("DOMContentLoaded", function () {
   function disableFilters(disabled) {
     sortOrder.disabled = disabled;
     applyFiltersBtn.disabled = disabled;
+    filterByGenreBtn.disabled = disabled; // Disabilita anche il bottone "Filtra Generi"
 
     // Imposta o rimuove il tooltip
     const tooltipText = disabled ? "Prima genera un anime" : "";
     sortOrder.setAttribute("title", tooltipText);
     applyFiltersBtn.setAttribute("title", tooltipText);
+    filterByGenreBtn.setAttribute("title", tooltipText);
   }
   disableFilters(true); // Disabilita all'avvio
 
