@@ -2,9 +2,9 @@
   "name": "random-anime",
   "version": "1.0.0",
   "description": "An api for fetch a random anime",
-  "main": "index.js",
+  "main": "backend.js",
   "scripts": {
-    "start": "nodemon index.js",
+    "start": "nodemon backend.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
