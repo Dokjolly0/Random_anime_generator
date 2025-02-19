@@ -41,6 +41,16 @@ const getRandomAnime = async () => {
       }
     }
 
+    let otherInfo = {};
+    const fetchInfo = $(".info-wrapper .info-item")
+      .map((i, el) => {
+        const key = $(el).find("strong").text().trim();
+        const value = $(el).find("small").text().trim();
+        otherInfo[key] = value;
+        return key && value ? [key, value] : null;
+      })
+      .get();
+
     // Creazione dell'oggetto anime con tutti i dettagli
     const anime = {
       url: animeUrl,
@@ -51,10 +61,9 @@ const getRandomAnime = async () => {
       episodes:
         parseInt($(".info-item:contains('Episodi') small").text().trim(), 10) ||
         0,
-      genres: $(".info-wrapper small")
-        .map((i, el) => $(el).text().trim())
-        .get()
-        .filter((genre) => genre && !genre.includes("\n")),
+      genres: $(".info-wrapper:contains('Generi') a.genre-link")
+        .map((i, el) => $(el).text().trim().replace(",", ""))
+        .get(),
       rating: $(".info-item:contains('Valutazione') small").text().trim(),
       type: $(".info-item:contains('Tipo') small").text().trim(),
       episodeDuration: $(".info-item:contains('Durata episodio') small")
@@ -67,6 +76,7 @@ const getRandomAnime = async () => {
       favorites: $(".info-item:contains('Preferiti') small").text().trim(),
       members: $(".info-item:contains('Membri') small").text().trim(),
       views: $(".info-item:contains('Visite') small").text().trim(),
+      infoFetched: otherInfo,
     };
 
     console.log($(".episode-wrapper").html());
