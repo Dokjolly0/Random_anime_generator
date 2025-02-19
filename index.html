@@ -9,34 +9,65 @@
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
       rel="stylesheet"
     />
-    <!-- Optional: jQuery for easier DOM manipulation (can be skipped if using vanilla JS) -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   </head>
   <body>
     <div class="container mt-5">
       <h1 class="text-center">Random Anime Finder</h1>
 
-      <!-- Form to select the number of anime -->
-      <div class="row justify-content-center mt-4">
-        <div class="col-md-6">
-          <form id="animeForm">
-            <div class="mb-3">
-              <label for="animeCount" class="form-label"
-                >Number of Anime to Search</label
-              >
-              <input
-                type="number"
-                class="form-control"
-                id="animeCount"
-                min="1"
-                value="1"
-                required
-              />
-            </div>
-            <button type="submit" class="btn btn-primary w-100 search-btn">
-              Search Anime
-            </button>
-          </form>
+      <!-- Filtro e numero anime (tutti su una riga) -->
+      <div class="row justify-content-center mt-4 align-items-end">
+        <div class="col-md-2">
+          <label for="animeCount" class="form-label">Number of Anime</label>
+          <input
+            type="number"
+            class="form-control"
+            id="animeCount"
+            min="1"
+            value="1"
+            required
+          />
+        </div>
+
+        <div class="col-md-2">
+          <label for="genreFilter" class="form-label">Filter by Genre</label>
+          <select
+            id="genreFilter"
+            class="form-select"
+            disabled
+            title="Prima genera un anime"
+          >
+            <option value="">All Genres</option>
+          </select>
+        </div>
+
+        <div class="col-md-2">
+          <label for="sortOrder" class="form-label">Sort By</label>
+          <select
+            id="sortOrder"
+            class="form-select"
+            disabled
+            title="Prima genera un anime"
+          >
+            <option value="rating">Rating</option>
+            <option value="year">Year</option>
+          </select>
+        </div>
+
+        <div class="col-md-2">
+          <button type="button" class="btn btn-primary w-100 search-btn">
+            Search Anime
+          </button>
+        </div>
+
+        <div class="col-md-2">
+          <button
+            type="button"
+            class="btn btn-secondary w-100 apply-filters"
+            disabled
+            title="Prima genera un anime"
+          >
+            Apply Filters
+          </button>
         </div>
       </div>
 
@@ -46,8 +77,8 @@
       </div>
     </div>
 
-    <!-- Bootstrap 5 JS (optional for Bootstrap components like modal, tooltips, etc.) -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- External script -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="./index.js"></script>
   </body>
 </html>
