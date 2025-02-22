@@ -1,0 +1,101 @@
+<div class="container mt-5">
+  <h1 class="text-center">Random Anime Finder</h1>
+
+  <!-- Filtro e numero anime -->
+  <div class="row justify-content-center mt-4 align-items-end">
+    <div class="col-md-2">
+      <label class="form-label">Number of Anime</label>
+      <input type="number" class="form-control" [(ngModel)]="animeCount" min="1" required />
+    </div>
+
+    <!-- Filtro per genere -->
+    <div class="col-md-2">
+      <label class="form-label">Filter by Genre</label>
+      <button
+        type="button"
+        class="btn btn-secondary w-100"
+        [disabled]="!animeList.length"
+        data-bs-toggle="modal"
+        data-bs-target="#genreModal"
+      >
+        Filtra Generi
+      </button>
+    </div>
+
+    <div class="col-md-2">
+      <label class="form-label">Sort By</label>
+      <select class="form-select" [(ngModel)]="sortOrder" [disabled]="!animeList.length" title="Prima genera un anime">
+        <option value="rating_asc">Rating (Low to High)</option>
+        <option value="rating_desc">Rating (High to Low)</option>
+        <option value="year_asc">Year (Old to New)</option>
+        <option value="year_desc">Year (New to Old)</option>
+      </select>
+    </div>
+
+    <div class="col-md-2">
+      <button class="btn btn-primary w-100" (click)="searchAnime()">Search Anime</button>
+    </div>
+
+    <div class="col-md-2">
+      <button class="btn btn-secondary w-100" [disabled]="!animeList.length" (click)="applyFilters()">
+        Apply Filters
+      </button>
+    </div>
+  </div>
+
+  <!-- Modal per selezione generi -->
+  <div class="modal fade" id="genreModal" tabindex="-1" aria-labelledby="genreModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="genreModalLabel">Select Genres</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form>
+            <div class="form-check" *ngFor="let genre of availableGenres">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                [id]="genre"
+                [checked]="isGenreSelected(genre)"
+                (change)="onGenreChange(genre, $event)"
+              />
+              <label class="form-check-label" [for]="genre">{{ genre }}</label>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" (click)="applyFilters()">Apply Filters</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Displaying the anime cards -->
+  <div class="row mt-5">
+    <div *ngFor="let anime of animeList" class="col-md-4">
+      <div class="card mb-4">
+        <img [src]="anime.cover" class="card-img-top" [alt]="anime.title" />
+        <div class="card-body">
+          <h5 class="card-title">{{ anime.title }}</h5>
+          <p class="card-text">{{ anime.description }}</p>
+          <p>
+            <strong>Genres:</strong>
+            {{ anime.genres.join(", ") }}
+          </p>
+          <p>
+            <strong>Rating:</strong>
+            {{ anime.rating }}
+          </p>
+          <p>
+            <strong>Year:</strong>
+            {{ anime.year }}
+          </p>
+          <a [href]="anime.url" class="btn btn-primary" target="_blank">More Info</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
