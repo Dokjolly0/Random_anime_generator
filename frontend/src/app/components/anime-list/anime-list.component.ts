@@ -8,6 +8,7 @@ import { GenerateAnimeService } from '../../services/generate-anime.service';
   styleUrls: ['./anime-list.component.css'],
 })
 export class AnimeListComponent implements OnInit {
+  animeLoaded: Anime[] = [];
   animeList: Anime[] = [];
   animeCount: number = 1;
   availableGenres: string[] = [];
@@ -35,6 +36,7 @@ export class AnimeListComponent implements OnInit {
   searchAnime() {
     this.generateAnimeService.getRandomAnime(this.animeCount).subscribe((data) => {
       this.animeList = data;
+      this.animeLoaded = data;
       this.loadGenres(); // Aggiorna la lista dei generi
       this.applyFilters();
     });
@@ -78,6 +80,18 @@ export class AnimeListComponent implements OnInit {
       });
     }
 
+    // Se non ci sono filtri attivi, mostra la lista completa
+    if (!this.selectedGenres.length && !this.sortOrder) {
+      filteredList = [...this.animeList];
+    }
+
     this.animeList = filteredList;
+  }
+
+  clearFilters() {
+    this.animeList = [...this.animeLoaded]; // Resetta la lista degli anime
+    this.selectedGenres = []; // Resetta i generi selezionati
+    this.sortOrder = ''; // Resetta l'ordinamento
+    this.applyFilters(); // Applica i filtri (che ora non faranno nulla)
   }
 }
