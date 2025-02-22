@@ -1,0 +1,21 @@
+{
+  "htmlhint.options": {
+    "attr-lowercase": false,
+    "doctype-first": false,
+    "tag-pair": true,
+    "tag-name-lowercase": true,
+    "attr-no-duplication": true,
+    "id-unique": true,
+    "src-not-empty": true,
+    "alt-require": true,
+    "title-require": false,
+    "style-disabled": false,
+    "inline-style-disabled": false,
+    "space-tab-mixed-disabled": true,
+    "indent-width": 2,
+    "attr-value-not-empty": true,
+    "img-alt-require": true,
+    "custom-elements": ["*ngIf", "*ngFor", "*ngSwitch", "*ngModel"],
+    "a-rel-noopener": true
+  }
+}

@@ -1,0 +1,59 @@
+# Compiled output
+/dist/
+/tmp/
+/out-tsc/
+/bazel-out/
+
+# Node.js modules
+/node_modules/
+
+# NPM logs
+npm-debug.log*
+yarn-error.log*
+
+# IDEs and editors
+.idea/
+/.project
+.classpath
+.c9/
+*.launch
+.settings/
+/.sublime-workspace
+
+# Visual Studio Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.history/
+
+# Miscellaneous
+/.angular/cache
+.sass-cache/
+/connect.lock
+/coverage/
+/libpeerconnection.log
+testem.log
+/typings/
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Angular CLI and TypeScript
+/.angular/
+*.tsbuildinfo
+
+# Environment files (optional, but useful to add if your app has sensitive data)
+src/environments/environment.prod.ts
+src/environments/environment.ts
+
+# TypeScript type declaration files
+*.d.ts
+
+# Dependency directories (optional)
+bower_components/
+
+# Local config files (optional, but useful for some environments)
+*.env
