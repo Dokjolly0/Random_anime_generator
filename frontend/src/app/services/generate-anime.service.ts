@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class GenerateAnimeService {
-  private apiUrl = 'http://localhost:3000/api/generate-anime';
+  private apiUrl = '/random-anime-generator/api/generate-anime';
 
   constructor(private http: HttpClient) {}
 

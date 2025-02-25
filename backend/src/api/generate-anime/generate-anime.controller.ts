@@ -3,6 +3,7 @@ import { Anime } from "./generate-anime.entity";
 import { GenerateAnime } from "./generate-anime.service";
 import * as fs from "fs";
 import * as path from "path";
+import pLimit from "p-limit"; // Importa p-limit
 
 export const generateAnime = async (
   req: Request,
@@ -13,13 +14,19 @@ export const generateAnime = async (
     const count = parseInt(req.params.count);
     const animeList: Anime[] = [];
     const generateAnimeSrv = new GenerateAnime();
+    const limit = pLimit(5); // Limita a 3 richieste simultanee
 
-    for (let i = 0; i < count; i++) {
-      const anime: Anime | null = await generateAnimeSrv.generateAnime();
-      if (anime != null) {
-        animeList.push(anime);
-      }
-    }
+    // Usa p-limit per limitare la concorrenza delle richieste
+    const tasks = Array.from({ length: count }).map(() =>
+      limit(async () => {
+        const anime: Anime | null = await generateAnimeSrv.generateAnime();
+        if (anime != null) {
+          animeList.push(anime);
+        }
+      })
+    );
+
+    await Promise.all(tasks);
 
     // Creazione della cartella "data" se non esiste
     const responseDir = path.join(__dirname, "../../../data");
