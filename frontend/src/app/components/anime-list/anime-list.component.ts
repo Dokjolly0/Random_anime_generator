@@ -14,6 +14,7 @@ export class AnimeListComponent implements OnInit {
   availableGenres: string[] = [];
   selectedGenres: string[] = []; // Array per i generi selezionati
   sortOrder: string = '';
+  isLoading: boolean = false;
 
   constructor(private generateAnimeService: GenerateAnimeService) {}
 
@@ -34,12 +35,21 @@ export class AnimeListComponent implements OnInit {
   }
 
   searchAnime() {
-    this.generateAnimeService.getRandomAnime(this.animeCount).subscribe((data) => {
-      this.animeList = data;
-      this.animeLoaded = data;
-      this.loadGenres(); // Aggiorna la lista dei generi
-      this.applyFilters();
-    });
+    this.isLoading = true; // Inizia il caricamento
+    this.generateAnimeService.getRandomAnime(this.animeCount).subscribe(
+      (data) => {
+        this.animeList = data;
+        this.animeLoaded = data;
+        this.loadGenres(); // Aggiorna la lista dei generi
+        console.log('Anime caricati:', this.animeList);
+        this.applyFilters();
+        this.isLoading = false; // Fine caricamento
+      },
+      (error) => {
+        console.error('Errore durante il caricamento degli anime:', error);
+        this.isLoading = false; // Fine caricamento anche in caso di errore
+      }
+    );
   }
 
   isGenreSelected(genre: string): boolean {

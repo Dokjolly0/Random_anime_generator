@@ -1,0 +1,308 @@
+// // import { Request, Response, NextFunction } from "express";
+// // import { Anime } from "./generate-anime.entity";
+// // import { GenerateAnime } from "./generate-anime.service";
+// // import * as fs from "fs";
+// // import * as path from "path";
+// // import pLimit from "p-limit"; // Importa p-limit
+
+// // // api/generate-anime/100?limit=2
+// // export const generateAnime = async (
+// //   req: Request,
+// //   res: Response,
+// //   next: NextFunction
+// // ) => {
+// //   try {
+// //     const count = parseInt(req.params.count);
+// //     const animeList: Anime[] = [];
+// //     const generateAnimeSrv = new GenerateAnime();
+// //     const LIMIT = req.query.limit ? parseInt(req.query.limit as string) : 2;
+// //     const limit = pLimit(LIMIT); // Limita a 3 richieste simultanee
+
+// //     // Usa p-limit per limitare la concorrenza delle richieste
+// //     const tasks = Array.from({ length: count }).map(() =>
+// //       limit(async () => {
+// //         const anime: Anime | null = await generateAnimeSrv.generateAnime();
+// //         if (anime != null) {
+// //           animeList.push(anime);
+// //         }
+// //       })
+// //     );
+
+// //     await Promise.all(tasks);
+
+// //     // Creazione della cartella "data" se non esiste
+// //     const responseDir = path.join(__dirname, "../../../data");
+// //     if (!fs.existsSync(responseDir)) {
+// //       fs.mkdirSync(responseDir);
+// //     }
+
+// //     // Salvataggio della risposta come file JSON
+// //     const filePath = path.join(responseDir, "response.json");
+// //     fs.writeFileSync(filePath, JSON.stringify(animeList, null, 2));
+
+// //     console.log(`Anime trovati: ${animeList.length}`);
+
+// //     res.json(animeList);
+// //   } catch (error: any) {
+// //     next(error);
+// //   }
+// // };
+
+// async generateAnime(): Promise<Anime | null> {
+//     try {
+//       const response = await axios.get(
+//         "https://www.animeunity.so/randomanime",
+//         {
+//           maxRedirects: 0,
+//           validateStatus: (status) => status === 302,
+//         }
+//       );
+
+//       const animeUrl = response.headers.location;
+//       if (!animeUrl) {
+//         throw new Error("Redirect URL not found!");
+//       }
+
+//       const animeResponse = await axios.get(animeUrl);
+//       const $ = cheerio.load(animeResponse.data);
+
+//       // 4️⃣ Estrazione delle informazioni
+//       const animePicture = $(".cover-wrap img").attr("src");
+//       // example: background: url(https://img.animeunity.so/anime/n272-FvZK2wFXEuay.jpg
+//       const bannerElement = $(".banner-wrapper div").attr("style");
+//       let urlBanner: string | null = null;
+//       if (bannerElement) {
+//         const urlArr = bannerElement.split("(");
+//         if (urlArr.length > 1) {
+//           urlBanner = urlArr[1].split(")")[0]; // Rimuove la parte finale dopo la chiusura del ')'
+//         }
+//       }
+
+//       let otherInfo = {};
+//       $(".info-wrapper .info-item")
+//         .map((i, el) => {
+//           const key = $(el).find("strong").text().trim();
+//           const value = $(el).find("small").text().trim();
+//           otherInfo[key] = value;
+//           return key && value ? [key, value] : null;
+//         })
+//         .get();
+
+//       const anime: Anime = {
+//         url: animeUrl,
+//         cover: $(".cover-wrap img").attr("src") || "",
+//         banner: urlBanner,
+//         title: $("h1.title").text().trim(),
+//         description: $(".description").text().trim(),
+//         episodes:
+//           parseInt(
+//             $(".info-item:contains('Episodi') small").text().trim(),
+//             10
+//           ) || 0,
+//         genres: $(".info-wrapper:contains('Generi') a.genre-link")
+//           .map((_, el) => $(el).text().trim())
+//           .get(),
+//         rating:
+//           parseFloat(
+//             $(".info-item:contains('Valutazione') small").text().trim()
+//           ) || "N/A",
+//         type: $(".info-item:contains('Tipo') small").text().trim(),
+//         episodeDuration: $(".info-item:contains('Durata episodio') small")
+//           .text()
+//           .trim(),
+//         status: $(".info-item:contains('Stato') small").text().trim(),
+//         year: $(".info-item:contains('Anno') small").text().trim(),
+//         season: $(".info-item:contains('Stagione') small").text().trim(),
+//         studio: $(".info-item:contains('Studio') small").text().trim(),
+//         favorites: $(".info-item:contains('Preferiti') small").text().trim(),
+//         members: $(".info-item:contains('Membri') small").text().trim(),
+//         views: $(".info-item:contains('Visite') small").text().trim(),
+//         otherInfoFetched: otherInfo,
+//       };
+
+//       // Pulizia dei generi
+//       anime.genres = anime.genres.filter((genre) => genre && genre !== "");
+
+//       // Estrazione del voto come numero
+//       const ratingText = $(".info-item:contains('Valutazione') small")
+//         .text()
+//         .trim();
+//       anime.rating = parseFloat(ratingText) || "N/A";
+
+//       return anime;
+//     } catch (error) {
+//       console.error("Error fetching random anime:", error);
+//       return null;
+//     }
+//   }
+
+// // api/generate-anime/100?limit=2
+// export const generateAnime = async (
+//   req: Request,
+//   res: Response,
+//   next: NextFunction
+// ) => {
+//   try {
+//     const count = parseInt(req.params.count);
+//     const animeList: Anime[] = [];
+//     const generateAnimeSrv = new GenerateAnime();
+//     const LIMIT = req.query.limit ? parseInt(req.query.limit as string) : 2;
+//     const limit = pLimit(LIMIT); // Limita a 3 richieste simultanee
+
+//     // Usa p-limit per limitare la concorrenza delle richieste
+//     const tasks = Array.from({ length: count }).map(() =>
+//       limit(async () => {
+//         const anime: Anime | null = await generateAnimeSrv.generateAnime();
+//         if (anime != null) {
+//           animeList.push(anime);
+//         }
+//       })
+//     );
+
+//     await Promise.all(tasks);
+
+//     // Creazione della cartella "data" se non esiste
+//     const responseDir = path.join(__dirname, "../../../data");
+//     if (!fs.existsSync(responseDir)) {
+//       fs.mkdirSync(responseDir);
+//     }
+
+//     // Salvataggio della risposta come file JSON
+//     const filePath = path.join(responseDir, "response.json");
+//     fs.writeFileSync(filePath, JSON.stringify(animeList, null, 2));
+
+//     console.log(Anime trovati: ${animeList.length});
+
+//     res.json(animeList);
+//   } catch (error: any) {
+//     next(error);
+//   }
+// };
+
+// Ricreami la stessa funzione, ma con un parametro nei query param che accetti un array di generi, e se il risultato in questione non ha almeno uno dei generi rifa la ricerca
+
+/*
+import { Request, Response, NextFunction } from "express";
+import { Anime } from "./generate-anime.entity";
+import { GenerateAnime } from "./generate-anime.service";
+import * as fs from "fs";
+import * as path from "path";
+import pLimit from "p-limit"; // Importa p-limit
+
+export const generateAnime = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const count = parseInt(req.params.count);
+    const animeList: Anime[] = [];
+    const generateAnimeSrv = new GenerateAnime();
+    const LIMIT = req.query.limit ? parseInt(req.query.limit as string) : 2;
+    const genresFilter: string[] = req.query.genres
+      ? (req.query.genres as string)
+          .split(",")
+          .map((genre) => genre.trim().replace(/,$/, "")) // Remove trailing commas
+          .filter(Boolean) // Remove empty genres
+      : [];
+    const strongFilterValidation = req.query.strongFilterValidation === "true"; // If true, it will look for exact matches
+    const limit = pLimit(LIMIT); // Limit concurrency
+
+    // Clean genresFilter to avoid any empty genres and trailing commas
+    const cleanedGenresFilter = genresFilter.filter(
+      (genre) => genre.trim() !== ""
+    );
+
+    // Use p-limit to limit concurrency for requests
+    const tasks = Array.from({ length: count }).map(() =>
+      limit(async () => {
+        let anime: Anime | null = null;
+        let retryCount = 0;
+        const MAX_RETRIES = 50; // Max retries before breaking the loop
+
+        if (cleanedGenresFilter.length > 0) {
+          // If strongFilterValidation is true, look for anime that has **all** the requested genres
+          if (strongFilterValidation) {
+            while (
+              !anime ||
+              !cleanedGenresFilter.every(
+                (genre) =>
+                  anime &&
+                  anime.genres
+                    .map((animeGenre) => animeGenre.trim().replace(/,$/, "")) // Clean up genres by removing trailing commas
+                    .some(
+                      (animeGenre) =>
+                        animeGenre.toLowerCase() === genre.toLowerCase()
+                    )
+              )
+            ) {
+              if (retryCount >= MAX_RETRIES) {
+                console.log("Max retries reached. No matching anime found.");
+                break;
+              }
+              anime = await generateAnimeSrv.generateAnime();
+              retryCount++;
+              if (anime) {
+                console.log(
+                  `Anime generato con generi: ${anime.genres.join(", ")}`
+                );
+              }
+            }
+          } else {
+            // If strongFilterValidation is false, look for anime that has **at least one** of the requested genres
+            while (
+              !anime ||
+              !anime.genres
+                .map((animeGenre) => animeGenre.trim().replace(/,$/, "")) // Clean the anime genres
+                .some((genre) =>
+                  cleanedGenresFilter.some(
+                    (filterGenre) =>
+                      filterGenre.toLowerCase() === genre.toLowerCase()
+                  )
+                )
+            ) {
+              if (retryCount >= MAX_RETRIES) {
+                console.log("Max retries reached. No matching anime found.");
+                break;
+              }
+              anime = await generateAnimeSrv.generateAnime();
+              retryCount++;
+              if (anime) {
+                console.log(
+                  `Anime generato con generi: ${anime.genres.join(", ")}`
+                );
+              }
+            }
+          }
+        } else {
+          // If no genres are provided, generate anime normally
+          anime = await generateAnimeSrv.generateAnime();
+        }
+
+        if (anime) {
+          animeList.push(anime);
+        }
+      })
+    );
+
+    await Promise.all(tasks);
+
+    // Create the "data" folder if it doesn't exist
+    const responseDir = path.join(__dirname, "../../../data");
+    if (!fs.existsSync(responseDir)) {
+      fs.mkdirSync(responseDir);
+    }
+
+    // Save the response as a JSON file
+    const filePath = path.join(responseDir, "response.json");
+    fs.writeFileSync(filePath, JSON.stringify(animeList, null, 2));
+
+    console.log(`Anime trovati: ${animeList.length}`);
+
+    res.json(animeList);
+  } catch (error: any) {
+    next(error);
+  }
+};
+
+ */

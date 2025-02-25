@@ -55,7 +55,7 @@ export class GenerateAnime {
             10
           ) || 0,
         genres: $(".info-wrapper:contains('Generi') a.genre-link")
-          .map((_, el) => $(el).text().trim())
+          .map((_, el) => $(el).text().trim().replace(",", ""))
           .get(),
         rating:
           parseFloat(

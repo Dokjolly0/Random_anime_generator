@@ -5,6 +5,7 @@ import * as fs from "fs";
 import * as path from "path";
 import pLimit from "p-limit"; // Importa p-limit
 
+// api/generate-anime/100?limit=2
 export const generateAnime = async (
   req: Request,
   res: Response,
@@ -14,7 +15,8 @@ export const generateAnime = async (
     const count = parseInt(req.params.count);
     const animeList: Anime[] = [];
     const generateAnimeSrv = new GenerateAnime();
-    const limit = pLimit(5); // Limita a 3 richieste simultanee
+    const LIMIT = req.query.limit ? parseInt(req.query.limit as string) : 2;
+    const limit = pLimit(LIMIT); // Limita a 3 richieste simultanee
 
     // Usa p-limit per limitare la concorrenza delle richieste
     const tasks = Array.from({ length: count }).map(() =>
@@ -37,6 +39,8 @@ export const generateAnime = async (
     // Salvataggio della risposta come file JSON
     const filePath = path.join(responseDir, "response.json");
     fs.writeFileSync(filePath, JSON.stringify(animeList, null, 2));
+
+    console.log(`Anime trovati: ${animeList.length}`);
 
     res.json(animeList);
   } catch (error: any) {
