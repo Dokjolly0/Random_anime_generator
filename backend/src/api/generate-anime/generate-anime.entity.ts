@@ -17,4 +17,7 @@ export interface Anime {
   views: string;
   year: number | string;
   otherInfoFetched: any;
+  startRequest: number;
+  endRequest: number;
+  requestTime: number;
 }

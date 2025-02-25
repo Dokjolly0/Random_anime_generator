@@ -5,6 +5,7 @@ import { Anime } from "./generate-anime.entity";
 export class GenerateAnime {
   async generateAnime(): Promise<Anime | null> {
     try {
+      const startRequest = Date.now();
       const response = await axios.get(
         "https://www.animeunity.so/randomanime",
         {
@@ -20,6 +21,7 @@ export class GenerateAnime {
 
       const animeResponse = await axios.get(animeUrl);
       const $ = cheerio.load(animeResponse.data);
+      const endRequest = Date.now();
 
       // 4️⃣ Estrazione delle informazioni
       const animePicture = $(".cover-wrap img").attr("src");
@@ -73,6 +75,9 @@ export class GenerateAnime {
         members: $(".info-item:contains('Membri') small").text().trim(),
         views: $(".info-item:contains('Visite') small").text().trim(),
         otherInfoFetched: otherInfo,
+        startRequest: startRequest,
+        endRequest: endRequest,
+        requestTime: endRequest - startRequest,
       };
 
       // Pulizia dei generi

@@ -29,6 +29,7 @@ export const generateAnime = async (
     );
 
     await Promise.all(tasks);
+    //console.log(`Richieste completate in ${endRequest - startRequest}ms`);
 
     // Creazione della cartella "data" se non esiste
     const responseDir = path.join(__dirname, "../../../data");
@@ -40,7 +41,7 @@ export const generateAnime = async (
     const filePath = path.join(responseDir, "response.json");
     fs.writeFileSync(filePath, JSON.stringify(animeList, null, 2));
 
-    console.log(`Anime trovati: ${animeList.length}`);
+    //console.log(`Anime trovati: ${animeList.length}`);
 
     res.json(animeList);
   } catch (error: any) {
