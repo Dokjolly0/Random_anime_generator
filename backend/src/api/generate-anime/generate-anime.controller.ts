@@ -16,7 +16,7 @@ export const generateAnime = async (
     const animeList: Anime[] = [];
     const generateAnimeSrv = new GenerateAnime();
     const LIMIT = req.query.limit ? parseInt(req.query.limit as string) : 2;
-    const limit = pLimit(LIMIT); // Limita a 3 richieste simultanee
+    const limit = pLimit(LIMIT); // Limita a 2 richieste simultanee
 
     // Usa p-limit per limitare la concorrenza delle richieste
     const tasks = Array.from({ length: count }).map(() =>
@@ -27,9 +27,7 @@ export const generateAnime = async (
         }
       })
     );
-
     await Promise.all(tasks);
-    //console.log(`Richieste completate in ${endRequest - startRequest}ms`);
 
     // Creazione della cartella "data" se non esiste
     const responseDir = path.join(__dirname, "../../../data");
@@ -40,9 +38,6 @@ export const generateAnime = async (
     // Salvataggio della risposta come file JSON
     const filePath = path.join(responseDir, "response.json");
     fs.writeFileSync(filePath, JSON.stringify(animeList, null, 2));
-
-    //console.log(`Anime trovati: ${animeList.length}`);
-
     res.json(animeList);
   } catch (error: any) {
     next(error);

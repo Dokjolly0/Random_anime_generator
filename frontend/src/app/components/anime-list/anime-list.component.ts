@@ -12,7 +12,7 @@ export class AnimeListComponent implements OnInit {
   animeList: Anime[] = [];
   animeCount: number = 1;
   availableGenres: string[] = [];
-  selectedGenres: string[] = []; // Array per i generi selezionati
+  selectedGenres: string[] = [];
   sortOrder: string = '';
   isLoading: boolean = false;
 
@@ -24,30 +24,26 @@ export class AnimeListComponent implements OnInit {
 
   loadGenres() {
     const genresSet = new Set<string>();
-
-    // Ciclare tutti gli anime per raccogliere i generi
     this.animeList.forEach((anime) => {
       anime.genres.forEach((genre) => genresSet.add(genre));
     });
-
-    // Convertire il Set in Array e ordinare alfabeticamente
     this.availableGenres = Array.from(genresSet).sort();
   }
 
   searchAnime() {
-    this.isLoading = true; // Inizia il caricamento
+    this.isLoading = true;
     this.generateAnimeService.getRandomAnime(this.animeCount).subscribe(
       (data) => {
         this.animeList = data;
         this.animeLoaded = data;
-        this.loadGenres(); // Aggiorna la lista dei generi
+        this.loadGenres();
         console.log('Anime caricati:', this.animeList);
         this.applyFilters();
-        this.isLoading = false; // Fine caricamento
+        this.isLoading = false;
       },
       (error) => {
         console.error('Errore durante il caricamento degli anime:', error);
-        this.isLoading = false; // Fine caricamento anche in caso di errore
+        this.isLoading = false;
       }
     );
   }
@@ -65,43 +61,36 @@ export class AnimeListComponent implements OnInit {
   }
 
   applyFilters() {
-    let filteredList = [...this.animeList];
+    let filteredList = [...this.animeLoaded];
 
-    // Filtro per genere: se sono selezionati dei generi, filtra in base a quelli
     if (this.selectedGenres.length) {
       filteredList = filteredList.filter((anime) => anime.genres.some((genre) => this.selectedGenres.includes(genre)));
     }
 
-    // Ordinamento
     if (this.sortOrder) {
       filteredList.sort((a, b) => {
         switch (this.sortOrder) {
           case 'rating_asc':
-            return +a.rating < +b.rating ? -1 : 1;
+            return +a.rating - +b.rating;
           case 'rating_desc':
-            return +a.rating > +b.rating ? -1 : 1;
+            return +b.rating - +a.rating;
           case 'year_asc':
-            return +a.year < +b.year ? -1 : 1;
+            return +a.year - +b.year;
           case 'year_desc':
-            return +a.year > +b.year ? -1 : 1;
+            return +b.year - +a.year;
           default:
             return 0;
         }
       });
     }
 
-    // Se non ci sono filtri attivi, mostra la lista completa
-    if (!this.selectedGenres.length && !this.sortOrder) {
-      filteredList = [...this.animeList];
-    }
-
     this.animeList = filteredList;
   }
 
   clearFilters() {
-    this.animeList = [...this.animeLoaded]; // Resetta la lista degli anime
-    this.selectedGenres = []; // Resetta i generi selezionati
-    this.sortOrder = ''; // Resetta l'ordinamento
-    this.applyFilters(); // Applica i filtri (che ora non faranno nulla)
+    this.animeList = [...this.animeLoaded];
+    this.selectedGenres = [];
+    this.sortOrder = '';
+    this.applyFilters();
   }
 }
