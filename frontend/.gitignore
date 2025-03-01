@@ -46,8 +46,8 @@ Thumbs.db
 *.tsbuildinfo
 
 # Environment files (optional, but useful to add if your app has sensitive data)
-src/environments/environment.prod.ts
-src/environments/environment.ts
+# src/environments/environment.prod.ts
+# src/environments/environment.ts
 
 # TypeScript type declaration files
 *.d.ts
