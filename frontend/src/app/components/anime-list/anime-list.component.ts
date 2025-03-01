@@ -10,6 +10,7 @@ import { GenerateAnimeService } from '../../services/generate-anime.service';
 export class AnimeListComponent implements OnInit {
   animeLoaded: Anime[] = [];
   animeList: Anime[] = [];
+  selectedAnime: Anime | null = null;
   animeCount: number = 1;
   availableGenres: string[] = [];
   selectedGenres: string[] = [];
@@ -20,6 +21,10 @@ export class AnimeListComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadGenres();
+  }
+
+  openAnimeDetails(anime: Anime): void {
+    this.selectedAnime = anime;
   }
 
   loadGenres() {

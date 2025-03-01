@@ -1,3 +1,4 @@
+/* Stile per le schede degli anime con animazioni al passaggio del mouse */
 .anime-card {
   transition: transform 0.3s, box-shadow 0.3s;
 }
@@ -6,16 +7,73 @@
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
 }
 
+/* Effetto hover per i pulsanti */
 .btn:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
+/* Stile per l'immagine piccola (attualmente nascosta, abilitabile se necessario) */
 .small-img {
-  width: 35px; /* Ridotta per essere allineata con il testo */
+  width: 35px; /* Dimensione ridotta per l'allineamento con il testo */
   height: 35px;
   object-fit: cover;
   vertical-align: middle;
   border-radius: 50%;
   display: none;
+}
+
+/* Container per il banner del modal */
+.modal-banner-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 200px;
+  overflow: hidden;
+}
+/* Immagine del banner con filtro per aumentare la leggibilità del testo */
+.modal-banner-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(0.6);
+}
+
+/* Immagine della cover in fallback (quando il banner non è disponibile) */
+.modal-cover-img {
+  width: 200px;
+  height: 300px;
+  object-fit: cover;
+  margin: -60px auto 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Fallback banner: background gradiente e centratura della cover */
+.fallback-banner {
+  width: 100%;
+  height: 200px;
+  background: linear-gradient(135deg, #1e3c72, #2a5298);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Stile del modal header per garantire un'altezza minima e un layout pulito */
+.modal-header {
+  min-height: 200px;
+  border-bottom: none;
+  padding-bottom: 0;
+  position: relative;
+}
+
+/* Padding superiore per il corpo del modal */
+.modal-body {
+  padding-top: 2rem;
+}
+
+/* Rimozione dell'overflow per un layout ordinato */
+.modal-content {
+  overflow: hidden;
 }

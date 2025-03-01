@@ -1,11 +1,10 @@
 <div class="container mt-5">
-  <h1 class="text-center text-primary fw-bold">
-    🎲 Random Anime Finder
-    <!-- <img src="../../../assets/funny_image.jpg" alt="Funny Image" class="small-img ms-2" /> -->
-  </h1>
+  <!-- Titolo principale -->
+  <h1 class="text-center text-primary fw-bold">🎲 Random Anime Finder</h1>
 
-  <!-- Filtro e numero anime -->
+  <!-- Sezione dei filtri: numero di anime, genere, ordinamento e azioni -->
   <div class="row justify-content-center mt-4 align-items-end">
+    <!-- Input per il numero di anime -->
     <div class="col-md-2">
       <label class="form-label fw-semibold">Number of Anime</label>
       <input
@@ -18,7 +17,7 @@
       />
     </div>
 
-    <!-- Filtro per genere -->
+    <!-- Bottone per filtrare per genere -->
     <div class="col-md-2">
       <label class="form-label fw-semibold">Filter by Genre</label>
       <button
@@ -32,6 +31,7 @@
       </button>
     </div>
 
+    <!-- Selettore per ordinamento -->
     <div class="col-md-2">
       <label class="form-label fw-semibold">Sort By</label>
       <select class="form-select shadow-sm" [(ngModel)]="sortOrder" [disabled]="!animeList.length" title="Sort By">
@@ -42,12 +42,14 @@
       </select>
     </div>
 
+    <!-- Pulsante per cercare anime -->
     <div class="col-md-2 mt-3 mt-md-0">
       <button class="btn btn-primary w-100 shadow-sm" (click)="searchAnime()" [disabled]="isLoading">
         Search Anime
       </button>
     </div>
 
+    <!-- Pulsante per applicare i filtri -->
     <div class="col-md-2 mt-3 mt-md-0">
       <button
         class="btn btn-secondary w-100 shadow-sm"
@@ -59,6 +61,7 @@
       </button>
     </div>
 
+    <!-- Pulsante per cancellare i filtri -->
     <div class="col-md-2 mt-3 mt-md-0">
       <button
         class="btn btn-danger w-100 shadow-sm"
@@ -70,14 +73,16 @@
     </div>
   </div>
 
-  <!-- Genre Selection Modal -->
+  <!-- Modal per la selezione dei generi -->
   <div class="modal fade" id="genreModal" tabindex="-1" aria-labelledby="genreModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
+        <!-- Header del modal -->
         <div class="modal-header">
           <h5 class="modal-title" id="genreModalLabel">Select Genres</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
+        <!-- Corpo del modal: lista dei generi -->
         <div class="modal-body">
           <div class="form-check" *ngFor="let genre of availableGenres">
             <input
@@ -92,6 +97,7 @@
             </label>
           </div>
         </div>
+        <!-- Footer del modal -->
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
           <button type="button" class="btn btn-primary" data-bs-dismiss="modal" (click)="applyFilters()">
@@ -110,14 +116,19 @@
     <p class="mt-2">Loading Anime...</p>
   </div>
 
-  <!-- Displaying the anime cards -->
+  <!-- Schede degli anime -->
   <div class="row mt-5">
     <div *ngFor="let anime of animeList" class="col-md-4 d-flex">
       <div class="card mb-4 flex-fill shadow-lg rounded-3 anime-card">
+        <!-- Immagine di copertina dell'anime -->
         <img [src]="anime.cover" class="card-img-top rounded-top-3" [alt]="anime.title" title="{{ anime.title }}" />
         <div class="card-body d-flex flex-column">
           <h5 class="card-title text-primary">{{ anime.title }}</h5>
           <p class="card-text flex-grow-1 text-muted">{{ anime.description }}</p>
+          <p>
+            <strong>Episodes:</strong>
+            {{ anime.episodes }}
+          </p>
           <p>
             <strong>Genres:</strong>
             {{ anime.genres.join(", ") }}
@@ -130,8 +141,123 @@
             <strong>Year:</strong>
             {{ anime.year }}
           </p>
-          <a [href]="anime.url" class="btn btn-outline-primary mt-auto" target="_blank">More Info</a>
+          <button
+            class="btn btn-outline-primary mt-auto"
+            (click)="openAnimeDetails(anime)"
+            data-bs-toggle="modal"
+            data-bs-target="#animeDetailsModal"
+          >
+            More Info
+          </button>
         </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal dei dettagli dell'anime -->
+<div
+  class="modal fade"
+  id="animeDetailsModal"
+  tabindex="-1"
+  aria-labelledby="animeDetailsModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <!-- Header del modal: mostra il banner se presente, altrimenti un fallback -->
+      <div class="modal-header position-relative">
+        <!-- Se il banner esiste, viene visualizzato -->
+        <div *ngIf="selectedAnime?.banner; else fallbackBanner" class="modal-banner-container">
+          <img [src]="selectedAnime?.banner" class="modal-banner-img" alt="Banner" />
+        </div>
+        <!-- Fallback: banner di default con background gradiente e cover -->
+        <ng-template #fallbackBanner>
+          <div class="fallback-banner">
+            <img [src]="selectedAnime?.cover" class="modal-cover-img" alt="Cover" />
+          </div>
+        </ng-template>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <!-- Corpo del modal con i dettagli dell'anime -->
+      <div class="modal-body">
+        <div class="row">
+          <!-- Visualizza la cover in miniatura se il banner è presente -->
+          <div class="col-md-4" *ngIf="selectedAnime?.banner">
+            <img [src]="selectedAnime?.cover" class="img-fluid rounded mb-3" alt="Cover" />
+          </div>
+          <div class="col-md-8">
+            <h3 class="mb-3">{{ selectedAnime?.title }}</h3>
+            <p class="text-muted">{{ selectedAnime?.description }}</p>
+            <div class="row">
+              <div class="col-6">
+                <p>
+                  <strong>Tipo:</strong>
+                  {{ selectedAnime?.type }}
+                </p>
+                <p>
+                  <strong>Episodi:</strong>
+                  {{ selectedAnime?.episodes }}
+                </p>
+                <p>
+                  <strong>Durata episodi:</strong>
+                  {{ selectedAnime?.episodeDuration }}
+                </p>
+                <p>
+                  <strong>Stato:</strong>
+                  {{ selectedAnime?.status }}
+                </p>
+              </div>
+              <div class="col-6">
+                <p>
+                  <strong>Genere:</strong>
+                  {{ selectedAnime?.genres?.join(", ") }}
+                </p>
+                <p>
+                  <strong>Rating:</strong>
+                  {{ selectedAnime?.rating }}
+                </p>
+                <p>
+                  <strong>Stagione:</strong>
+                  {{ selectedAnime?.season }}
+                </p>
+                <p>
+                  <strong>Studio:</strong>
+                  {{ selectedAnime?.studio }}
+                </p>
+              </div>
+            </div>
+            <div class="row mt-2" *ngIf="selectedAnime?.year || selectedAnime?.favorites">
+              <div class="col-6">
+                <p>
+                  <strong>Anno:</strong>
+                  {{ selectedAnime?.year }}
+                </p>
+                <p>
+                  <strong>Preferiti:</strong>
+                  {{ selectedAnime?.favorites }}
+                </p>
+              </div>
+              <div class="col-6">
+                <p>
+                  <strong>Membri:</strong>
+                  {{ selectedAnime?.members }}
+                </p>
+                <p>
+                  <strong>Visualizzazioni:</strong>
+                  {{ selectedAnime?.views }}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer del modal con link esterno e pulsante di chiusura -->
+      <div class="modal-footer">
+        <a [href]="selectedAnime?.url" class="btn btn-primary" target="_blank">Apri su Anime Unity</a>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Chiudi</button>
       </div>
     </div>
   </div>
