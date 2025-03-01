@@ -1,14 +1,21 @@
 <div class="container mt-5">
   <h1 class="text-center text-primary fw-bold">
     🎲 Random Anime Finder
-    <img src="../../../assets/funny_image.jpg" alt="Funny Image" class="small-img ms-2" />
+    <!-- <img src="../../../assets/funny_image.jpg" alt="Funny Image" class="small-img ms-2" /> -->
   </h1>
 
   <!-- Filtro e numero anime -->
   <div class="row justify-content-center mt-4 align-items-end">
     <div class="col-md-2">
       <label class="form-label fw-semibold">Number of Anime</label>
-      <input type="number" class="form-control shadow-sm" [(ngModel)]="animeCount" min="1" required />
+      <input
+        type="number"
+        class="form-control shadow-sm"
+        [(ngModel)]="animeCount"
+        min="1"
+        required
+        placeholder="Anime count"
+      />
     </div>
 
     <!-- Filtro per genere -->
@@ -27,7 +34,7 @@
 
     <div class="col-md-2">
       <label class="form-label fw-semibold">Sort By</label>
-      <select class="form-select shadow-sm" [(ngModel)]="sortOrder" [disabled]="!animeList.length">
+      <select class="form-select shadow-sm" [(ngModel)]="sortOrder" [disabled]="!animeList.length" title="Sort By">
         <option value="rating_asc">Rating (Low to High)</option>
         <option value="rating_desc">Rating (High to Low)</option>
         <option value="year_asc">Year (Old to New)</option>
@@ -107,7 +114,7 @@
   <div class="row mt-5">
     <div *ngFor="let anime of animeList" class="col-md-4 d-flex">
       <div class="card mb-4 flex-fill shadow-lg rounded-3 anime-card">
-        <img [src]="anime.cover" class="card-img-top rounded-top-3" [alt]="anime.title" />
+        <img [src]="anime.cover" class="card-img-top rounded-top-3" [alt]="anime.title" title="{{ anime.title }}" />
         <div class="card-body d-flex flex-column">
           <h5 class="card-title text-primary">{{ anime.title }}</h5>
           <p class="card-text flex-grow-1 text-muted">{{ anime.description }}</p>
